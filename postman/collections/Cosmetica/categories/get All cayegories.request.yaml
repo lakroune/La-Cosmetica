@@ -4,4 +4,4 @@ url: http://127.0.0.1:8000/api/categories
 method: GET
 headers:
   Authorization: "{{tokenJWT}}"
-order: 1266268732308141
+order: 3000
