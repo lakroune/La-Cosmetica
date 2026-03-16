@@ -51,4 +51,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class)->withTimestamps();
     }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

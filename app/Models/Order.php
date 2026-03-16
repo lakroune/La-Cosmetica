@@ -9,4 +9,10 @@ class Order extends Model
 {
     /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;
+    protected $fillable = ['total_price', 'status', 'user_id'];
+    protected $table = 'orders';
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

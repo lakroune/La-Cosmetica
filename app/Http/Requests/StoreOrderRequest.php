@@ -12,7 +12,7 @@ class StoreOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,22 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "total_price" => ['required', 'numeric', 'min:0'],
+            "status" => ['required', 'in:pending,processing,completed,cancelled'],
+            "user_id" => ['required', 'exists:users,id'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'total_price.required' => 'The total price is required.',
+            'total_price.numeric' => 'The total price must be a number.',
+            'total_price.min' => 'The total price must be at least 0.',
+            'status.required' => 'The order status is required.',
+            'status.in' => 'The order status must be one of the following: pending, processing, completed, cancelled.',
+            'user_id.required' => 'The user ID is required.',
+            'user_id.exists' => 'The selected user does not exist.',
         ];
     }
 }
