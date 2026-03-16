@@ -13,7 +13,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::all();
+        return response()->json($orders, 200);
     }
 
     /**
@@ -21,7 +22,9 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
-        //
+        $data = $request->validated();
+        $order = Order::create($data);
+        return response()->json($order, 201);
     }
 
     /**
@@ -29,7 +32,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return response()->json($order, 200);
     }
 
     /**
@@ -37,7 +40,9 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        //
+        $data = $request->validated();
+        $order->update($data);
+        return response()->json($order, 200);
     }
 
     /**
@@ -45,6 +50,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        $order->delete();
+        return response()->json(null, 204);
     }
 }
