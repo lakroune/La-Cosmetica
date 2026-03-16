@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
             return $user->isAdmin();
         });
         Gate::define('manage-products', function ($user) {
-            return $user->roles()->where('name', 'Admin')->exists();
+            return $user->isAdmin();
         });
     }
 }
