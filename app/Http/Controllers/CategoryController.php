@@ -14,7 +14,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        return response()->json($categories, 200);
     }
 
     /**
@@ -34,7 +35,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         Gate::authorize('manage-categories');
-        return response()->json($category);
+        return response()->json($category, 200);
     }
 
     /**
@@ -45,7 +46,7 @@ class CategoryController extends Controller
         Gate::authorize('manage-categories');
         $data = $request->validated();
         $category->update($data);
-        return response()->json($category);
+        return response()->json($category, 200);
     }
 
     /**

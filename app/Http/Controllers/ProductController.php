@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -13,7 +14,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::with('category')->get();
+        return response()->json($products, 200);
     }
 
     /**
@@ -21,7 +23,10 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        Gate::authorize('manage-products');
+        $data = $request->validated();
+        $product = Product::create($data);
+        return response()->json($product, 201);
     }
 
     /**
@@ -29,7 +34,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return response()->json($product, 200);
     }
 
     /**
@@ -37,7 +42,10 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        Gate::authorize('manage-products');
+        $data = $request->validated();
+        $product->update($data);
+        return response()->json($product, 200);
     }
 
     /**
@@ -45,6 +53,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        Gate::authorize('manage-products');
+        $product->delete();
+        return response()->json(null, 204);
     }
 }
