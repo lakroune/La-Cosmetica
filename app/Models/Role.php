@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    Use HasFactory;
+    use HasFactory;
     protected $fillable = ['name'];
-        protected $table = 'roles';
+    protected $table = 'roles';
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'role_user')->pivotable('name')->withTimestamps();
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
-    
 }

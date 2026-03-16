@@ -60,7 +60,7 @@ class User extends Authenticatable implements JWTSubject
     }
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'role_user')->pivotable('name')->withTimestamps();
+        return $this->belongsToMany(Role::class)->withTimestamps();
     }
     public function orders()
     {
