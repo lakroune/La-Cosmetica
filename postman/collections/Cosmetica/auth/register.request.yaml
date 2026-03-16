@@ -6,13 +6,13 @@ body:
   type: json
   content: "{\r
 
-    \  \"name\": \"adam\",\r
+    \  \"name\": \"admin\",\r
 
-    \  \"email\": \"adam@gmail.com\",\r
+    \  \"email\": \"admin@gmail.com\",\r
 
     \  \"password\": \"password\",\r
 
     \  \"password_confirmation\": \"password\"\r
 
     }"
-order: 1773673359905
+order: 1773699096335

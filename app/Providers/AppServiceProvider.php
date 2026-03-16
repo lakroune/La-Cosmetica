@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('manage-categories', function ($user) {
-            return $user->roles()->where('name', 'Admin')->exists();
+            return $user->isAdmin();
         });
         Gate::define('manage-products', function ($user) {
             return $user->roles()->where('name', 'Admin')->exists();

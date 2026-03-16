@@ -13,7 +13,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $user =  User::create($data);
-        $user->roles()->attach(2);
+        $user->roles()->attach(1);
         return response()->json([
             'user' => $user,
         ], 201);
