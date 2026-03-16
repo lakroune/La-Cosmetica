@@ -13,10 +13,8 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $user =  User::create($data);
-        $token = auth('api')->login($user);
         return response()->json([
             'user' => $user,
-            'token' => $token
         ], 201);
     }
 
@@ -28,5 +26,16 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         return response()->json(['token' => $token], 200);
+    }
+
+    public function me()
+    {
+        return response()->json(auth()->user(), 200);
+    }
+
+    public function logout()
+    {
+        auth('api')->logout();
+        return response()->json(['message' => 'Successfully logged out'], 200);
     }
 }
