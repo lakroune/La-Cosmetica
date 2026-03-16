@@ -26,7 +26,7 @@ class CategoryController extends Controller
         Gate::authorize('manage-categories');
         $data = $request->validated();
         $category = Category::create($data);
-        
+
         return response()->json($category, 201);
     }
 
@@ -35,7 +35,6 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        Gate::authorize('manage-categories');
         return response()->json($category, 200);
     }
 
