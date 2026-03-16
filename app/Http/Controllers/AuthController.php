@@ -12,10 +12,14 @@ class AuthController extends Controller
     public function register(RegisterResquest $request)
     {
         $data = $request->validated();
-
-        $user =  User::created($data);
-        return response()->json($user, 201);
+        $user =  User::create($data);
+        $token = auth('api')->login($user);
+        return response()->json([
+            'user' => $user,
+            'token' => $token
+        ], 201);
     }
+
     public  function login(LoginResquest $request)
     {
         $data = $request->validated();
