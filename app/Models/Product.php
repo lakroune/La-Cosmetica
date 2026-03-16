@@ -20,4 +20,8 @@ class Product extends Model
     {
         return $this->belongsToMany(Order::class, 'order_products')->withPivot('quantity', 'unit_price')->withTimestamps();
     }
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
 }

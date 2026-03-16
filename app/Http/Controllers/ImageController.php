@@ -13,7 +13,8 @@ class ImageController extends Controller
      */
     public function index()
     {
-        //
+        $images = Image::with('product')->get();
+        return response()->json($images, 200);
     }
 
     /**
@@ -21,7 +22,9 @@ class ImageController extends Controller
      */
     public function store(StoreImageRequest $request)
     {
-        //
+        $data = $request->validated();
+        $image = Image::create($data);
+        return response()->json($image, 201);
     }
 
     /**
@@ -29,7 +32,7 @@ class ImageController extends Controller
      */
     public function show(Image $image)
     {
-        //
+        return response()->json($image, 200);
     }
 
     /**
@@ -37,7 +40,9 @@ class ImageController extends Controller
      */
     public function update(UpdateImageRequest $request, Image $image)
     {
-        //
+        $data = $request->validated();
+        $image->update($data);
+        return response()->json($image, 200);
     }
 
     /**
@@ -45,6 +50,7 @@ class ImageController extends Controller
      */
     public function destroy(Image $image)
     {
-        //
+        $image->delete();
+        return response()->json(null, 204);
     }
 }
