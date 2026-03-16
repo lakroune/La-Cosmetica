@@ -49,7 +49,7 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class)->withTimestamps();
+        return $this->belongsToMany(Role::class, 'role_user')->pivotable('name')->withTimestamps();
     }
     public function orders()
     {
