@@ -50,10 +50,12 @@ class OrderController extends Controller
                     ]);
 
                     $totalPrice += $linePrice;
-
+                    if ($product->stock < $item['quantity']) {
+                        throw new \Exception("Product {$product->name} is out of stock.");
+                    }
                     $product->decrement('stock', $item['quantity']);
                 }
-
+    
                 $order->update(['total_price' => $totalPrice]);
 
                 return $order;
