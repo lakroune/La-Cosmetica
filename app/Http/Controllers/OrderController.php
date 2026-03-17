@@ -30,6 +30,7 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
+         
         $data = $request->validated();
 
         try {
@@ -79,7 +80,9 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        Gate::authorize('view-order', $order);
+        if (!auth()->user()->can('view-order', $order)) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         return response()->json($order->load('products'), 200);
     }
 
