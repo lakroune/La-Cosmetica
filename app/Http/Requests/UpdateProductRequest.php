@@ -27,6 +27,7 @@ class UpdateProductRequest extends FormRequest
             "name" => ['required', 'string', 'max:255'],
             "description" => ['nullable', 'string'],
             "price" => ['required', 'numeric', 'min:0'],
+            "slug" => ['required', 'unique:products,slug'],
             "stock" => ['required', 'integer', 'min:0'],
             "category_id" => ['required', 'exists:categories,id'],
         ];
@@ -47,6 +48,8 @@ class UpdateProductRequest extends FormRequest
             'stock.min' => 'The product stock must be at least 0.',
             'category_id.required' => 'The category ID is required.',
             'category_id.exists' => 'The selected category does not exist.',
+            'slug.required' => 'The product slug is required.',
+            'slug.unique' => 'The product slug must be unique.',
         ];
     }
 }
