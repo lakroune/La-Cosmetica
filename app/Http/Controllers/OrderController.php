@@ -16,7 +16,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        
+
         $orders = Order::with('products')->where('user_id', auth()->id())->get();
         return response()->json($orders, 200);
     }
@@ -74,6 +74,7 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
+        Gate::authorize('manage-orders');
         $data = $request->validated();
         $order->update($data);
         return response()->json($order, 200);
