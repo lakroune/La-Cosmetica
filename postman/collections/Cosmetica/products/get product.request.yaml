@@ -1,6 +1,6 @@
 $kind: http-request
 name: get product
-url: http://127.0.0.1:8000/api/products/cream-hydratante-bio
+url: http://127.0.0.1:8000/api/products/parfum-dior-sauvage-1
 method: GET
 headers:
   Authorization: "{{tokenJWT}}"

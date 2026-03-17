@@ -14,8 +14,11 @@ class ProductController extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->can('products.view')) {
+           
+        }
         $products = Product::with('category')->get();
-        return response()->json($products, 200);
+        return response()->json(["message" => "Products found successfully", "products" => $products], 200);
     }
 
     /**
@@ -23,7 +26,9 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        Gate::authorize('manage-products');
+        if (!auth()->user()->can('products.create')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         $data = $request->validated();
         $product = Product::create($data);
 
@@ -38,7 +43,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return response()->json($product, 200);
+        if (!auth()->user()->can('products.view')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        return response()->json(["message" => "Product found successfully", "product" => $product->load('category')], 200);
     }
 
     /**
@@ -46,10 +54,12 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        Gate::authorize('manage-products');
+        if (!auth()->user()->can('products.update')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         $data = $request->validated();
         $product->update($data);
-        return response()->json($product, 200);
+        return response()->json(["message" => "Product updated successfully", "product" => $product], 200);
     }
 
     /**
@@ -57,8 +67,10 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        Gate::authorize('manage-products');
+        if (!auth()->user()->can('products.delete')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         $product->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Product deleted successfully'], 204);
     }
 }

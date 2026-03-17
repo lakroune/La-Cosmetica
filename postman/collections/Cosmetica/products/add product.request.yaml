@@ -16,9 +16,7 @@ body:
 
     \  \"stock\": 25,\r
 
-    \  \"category_id\": 1,\r
-
-    \  \"slug\" : \"cream-hydratante-bio\"\r
+    \  \"category_id\": 1\r
 
     }"
 order: 2000
