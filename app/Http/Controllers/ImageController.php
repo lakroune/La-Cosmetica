@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Image;
 use App\Http\Requests\StoreImageRequest;
 use App\Http\Requests\UpdateImageRequest;
+use App\Models\Product;
 
 class ImageController extends Controller
 {
@@ -15,7 +16,9 @@ class ImageController extends Controller
     public function store(StoreImageRequest $request)
     {
         $data = $request->validated();
-
+        if (Product::findOrFail($data['product_id'])->images()->count() + count($data['images']) > 4) {
+            return response()->json(['message' => 'You can upload a maximum of 4 images per product.'], 422);
+        }
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $imageFile) {
                 $path = $imageFile->store('products', 'public');
