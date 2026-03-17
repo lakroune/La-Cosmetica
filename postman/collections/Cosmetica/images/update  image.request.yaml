@@ -5,12 +5,12 @@ method: PUT
 headers:
   Authorization: "{{tokenJWT}}"
 body:
-  type: json
-  content: "{\r
-
-    \    \"product_id\": 2,\r
-
-    \    \"url\": \"image1.jpg\"\r
-
-    }"
+  type: formdata
+  content:
+    - type: file
+      key: image
+      src:
+        - /C:/Users/youco/Desktop/artworks-000185841602-bsblc3-t1080x1080.jpg
+      description: ""
+      disabled: false
 order: 1231

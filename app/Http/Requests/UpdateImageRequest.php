@@ -23,19 +23,17 @@ class UpdateImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'url' => ['required', 'string', 'max:255'],
-            'product_id' => ['required', 'exists:products,id'],
+            'image' => ['required', 'file', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'url.required' => 'The image URL is required.',
-            'url.string' => 'The image URL must be a string.',
-            'url.max' => 'The image URL may not be greater than 255 characters.',
-            'product_id.required' => 'The product ID is required.',
-            'product_id.exists' => 'The specified product does not exist.',
+            'image.required' => 'The image is required.',
+            'image.file' => 'The image must be a file.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, svg.',
+            'image.max' => 'The image must not exceed 2048 kilobytes.',
         ];
     }
 }
