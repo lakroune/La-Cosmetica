@@ -16,8 +16,12 @@ class OrderController extends Controller
      */
     public function index()
     {
+        if (auth()->user()->hasRole('client')) {
+            $orders = Order::with('products')->where('user_id', auth()->id())->get();
+        } else if (auth()->user()->hasRole('worker' || 'admin')) {
+            $orders = Order::with('products')->get();
+        }
 
-        $orders = Order::with('products')->where('user_id', auth()->id())->get();
         return response()->json($orders, 200);
     }
 

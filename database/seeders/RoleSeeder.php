@@ -14,7 +14,9 @@ class RoleSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
 
-        Permission::create(['name' => 'products.view', 'guard_name' => 'api']);
+        Permission::create(['name' => '/* The `products` section in the code is defining permissions related to product management within the application. These permissions include viewing products, listing products, creating new products, updating existing products, deleting products, and managing images associated with products. These permissions are crucial for controlling access and actions related to products within the system. */
+        /* In the given PHP code snippet, the `products` section is related to defining permissions and roles for managing products within an application. */
+        products.view', 'guard_name' => 'api']);
         Permission::create(['name' => 'products.list', 'guard_name' => 'api']);
         Permission::create(['name' => 'products.create', 'guard_name' => 'api']);
         Permission::create(['name' => 'products.update', 'guard_name' => 'api']);

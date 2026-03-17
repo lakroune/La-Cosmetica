@@ -16,7 +16,7 @@ class AuthController extends Controller
         $user = User::create($data);
 
         if ($user) {
-            $user->assignRole('admin');
+            $user->assignRole('client');
         } else {
             return response()->json(['error' => 'Error creating user'], 500);
         }

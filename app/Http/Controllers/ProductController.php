@@ -14,9 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->can('products.view')) {
-           
-        }
+
         $products = Product::with('category')->get();
         return response()->json(["message" => "Products found successfully", "products" => $products], 200);
     }
@@ -26,9 +24,7 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        if (!auth()->user()->can('products.create')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+
         $data = $request->validated();
         $product = Product::create($data);
 
@@ -43,9 +39,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        if (!auth()->user()->can('products.view')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+
         return response()->json(["message" => "Product found successfully", "product" => $product->load('category')], 200);
     }
 
@@ -54,9 +48,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        if (!auth()->user()->can('products.update')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+
         $data = $request->validated();
         $product->update($data);
         return response()->json(["message" => "Product updated successfully", "product" => $product], 200);
@@ -67,9 +59,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        if (!auth()->user()->can('products.delete')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully'], 204);
     }
