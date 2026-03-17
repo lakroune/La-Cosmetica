@@ -1,0 +1,7 @@
+$kind: http-request
+name: New Request
+url: http://127.0.0.1:8000/api/images
+method: POST
+headers:
+  Authorization: "{{tokenJWT}}"
+order: 1773739950550
