@@ -9,13 +9,14 @@ body:
   content:
     - type: text
       key: product_id
-      value: "2"
+      value: "4"
       description: ""
       disabled: false
     - type: file
       key: images[]
       src:
         - /C:/Users/youco/Desktop/8311140a8baca9620ec4ed1c833a1dca.jpg
+        - /C:/Users/youco/Desktop/artworks-000185841602-bsblc3-t1080x1080.jpg
       description: image
       disabled: false
 order: 2000

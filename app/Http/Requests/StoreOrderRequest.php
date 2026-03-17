@@ -23,22 +23,24 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "total_price" => ['required', 'numeric', 'min:0'],
-            "status" => ['required', 'in:pending,processing,completed,cancelled'],
-            "user_id" => ['required', 'exists:users,id'],
+            "products" => "required|array|min:1",
+            "products.*.product_id" => "required|exists:products,id",
+            "products.*.quantity" => "required|integer|min:1",
         ];
     }
 
     public function messages(): array
     {
         return [
-            'total_price.required' => 'The total price is required.',
-            'total_price.numeric' => 'The total price must be a number.',
-            'total_price.min' => 'The total price must be at least 0.',
-            'status.required' => 'The order status is required.',
-            'status.in' => 'The order status must be one of the following: pending, processing, completed, cancelled.',
-            'user_id.required' => 'The user ID is required.',
-            'user_id.exists' => 'The selected user does not exist.',
+            "products.required" => "The products field is required.",
+            "products.array" => "The products field must be an array.",
+            "products.min" => "At least one product is required.",
+            "products.*.product_id.required" => "Each product must have a product ID.",
+            "products.*.product_id.exists" => "The specified product does not exist.",
+            "products.*.quantity.required" => "Each product must have a quantity.",
+            "products.*.quantity.integer" => "The quantity must be an integer.",
+            "products.*.quantity.min" => "The quantity must be at least 1.",
+            
         ];
     }
 }
