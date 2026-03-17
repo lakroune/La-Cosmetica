@@ -7,6 +7,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
@@ -15,7 +16,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::all();
+        
+        $orders = Order::with('products')->where('user_id', auth()->id())->get();
         return response()->json($orders, 200);
     }
 
@@ -63,7 +65,8 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        return response()->json($order, 200);
+        Gate::authorize('view-order', $order);
+        return response()->json($order->load('products'), 200);
     }
 
     /**

@@ -1,7 +1,7 @@
 $kind: http-request
 name: add order
-url: http://127.0.0.1:8000/api/orders
-method: POST
+url: http://127.0.0.1:8000/api/orders/3
+method: PUT
 headers:
   Authorization: "{{tokenJWT}}"
 body:
@@ -29,4 +29,4 @@ body:
     \  ]\r
 
     }"
-order: 3000
+order: 1000

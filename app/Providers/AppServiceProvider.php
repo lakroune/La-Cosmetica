@@ -26,5 +26,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-products', function ($user) {
             return $user->isAdmin();
         });
+        Gate::define('manage-images', function ($user) {
+            return $user->isAdmin();
+        });
+        Gate::define('view-order', function ($user, $order) {
+            return $user->id === $order->user_id || $user->isAdmin();
+        });
     }
 }
