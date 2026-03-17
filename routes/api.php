@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -22,6 +23,7 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('products', ProductController::class)->except(['index', 'show']);
         Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
         Route::apiResource('images', ImageController::class);
+        Route::get('admin/stats', [DashboardController::class, 'index']);
     });
     Route::middleware('role:worker')->group(function () {
         Route::apiResource('orders', OrderController::class)->only(['update']);
