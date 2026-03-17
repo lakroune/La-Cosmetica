@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
+use App\Policies\OrderPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,21 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('manage-categories', function ($user) {
-            return $user->isWorker();
-        });
-        Gate::define('manage-products', function ($user) {
-            return $user->isAdmin();
-        });
-        Gate::define('manage-orders', function ($user) {
-            return $user->isWorker();
-        });
-        Gate::define('view-order', function ($user, $order) {
-            return $order->isMine($user) || $user->isAdmin();
-        });
-
-        Gate::define('cancel-order', function ($user, $order) {
-            return $order->isMine($user) && $user->isClient() && $order->status === 'pending';
-        });
+        Gate::policy(Order::class, OrderPolicy::class);
     }
 }
