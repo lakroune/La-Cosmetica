@@ -40,7 +40,7 @@ class StoreOrderRequest extends FormRequest
             "products.*.quantity.required" => "Each product must have a quantity.",
             "products.*.quantity.integer" => "The quantity must be an integer.",
             "products.*.quantity.min" => "The quantity must be at least 1.",
-            
+
         ];
     }
 }
