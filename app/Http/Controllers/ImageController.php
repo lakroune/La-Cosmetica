@@ -40,7 +40,8 @@ class ImageController extends Controller
     public function update(UpdateImageRequest $request, Image $image)
     {
         $data = $request->validated();
-        $image->update($data);
+        $path = $data['image']->store('products', 'public');
+        $image->update(['url' => $path]);
         return response()->json($image, 200);
     }
 
