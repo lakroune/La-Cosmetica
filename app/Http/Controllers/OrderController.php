@@ -19,7 +19,7 @@ class OrderController extends Controller
     {
         if (auth()->user()->hasRole('client')) {
             $orders = Order::with('products')->where('user_id', auth()->id())->get();
-        } else if (auth()->user()->hasAnyRole(['worker', 'admin', 'manager'])) {
+        } else   {
             $orders = Order::with('products')->get();
         }
 

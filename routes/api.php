@@ -20,15 +20,15 @@ Route::middleware('auth:api')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
 
     Route::middleware('role:admin')->group(function () {
+        Route::get('admin/stats', [DashboardController::class, 'index']);
+        Route::apiResource('images', ImageController::class);
         Route::apiResource('products', ProductController::class)->except(['index', 'show']);
         Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
-        Route::apiResource('images', ImageController::class);
-        Route::get('admin/stats', [DashboardController::class, 'index']);
     });
+
     Route::middleware('role:worker')->group(function () {
-        Route::apiResource('orders', OrderController::class)->only(['update']);
+        Route::patch('orders/{order}/status', [OrderController::class, 'update']);
     });
-    Route::middleware('role:client')->group(function () {
-        Route::apiResource('orders', OrderController::class)->except(['update']);
-    });
+
+    Route::apiResource('orders', OrderController::class);
 });
