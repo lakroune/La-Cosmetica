@@ -1,0 +1,16 @@
+$kind: http-request
+name: update  image
+url: http://127.0.0.1:8000/api/images/2
+method: PUT
+headers:
+  Authorization: "{{tokenJWT}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"product_id\": 2,\r
+
+    \    \"url\": \"image1.jpg\"\r
+
+    }"
+order: 1231

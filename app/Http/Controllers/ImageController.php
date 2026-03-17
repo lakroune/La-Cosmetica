@@ -15,23 +15,21 @@ class ImageController extends Controller
     public function store(StoreImageRequest $request)
     {
         $data = $request->validated();
-        foreach ($data['iamges'] as $imageFile) {
-            $path = $imageFile->store('images', 'public');
-            Image::create([
-                'url' => $path,
-                'product_id' => $data['product_id'],
-            ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imageFile) {
+                $path = $imageFile->store('products', 'public');
+
+                Image::create([
+                    'url' => $path,
+                    'product_id' => $data['product_id'],
+                ]);
+            }
         }
-        return response()->json(['message' => 'Images uploaded successfully.'], 201);
+
+        return response()->json(['message' => 'Images uploaded .'], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Image $image)
-    {
-        return response()->json($image, 200);
-    }
 
     /**
      * Update the specified resource in storage.
