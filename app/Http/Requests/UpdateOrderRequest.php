@@ -13,7 +13,7 @@ class UpdateOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Gate::allows('manage-orders');
+        return  auth()->user()->can('orders.update');
     }
 
     /**

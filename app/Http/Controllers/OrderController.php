@@ -94,7 +94,7 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        Gate::authorize('manage-orders');
+
         $data = $request->validated();
         $order->update($data);
         return response()->json($order, 200);
@@ -105,7 +105,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        Gate::authorize('cancel-order', $order);
+        $this->authorize('delete', $order);
         $order->delete();
         return response()->json(null, 204);
     }
