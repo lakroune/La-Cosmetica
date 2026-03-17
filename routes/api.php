@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
@@ -12,12 +11,18 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
-
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+
 Route::middleware('auth:api')->group(function () {
+
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::apiResource('products', ProductController::class)->except(['index', 'show']);
-    Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
-    Route::apiResource('images', ImageController::class)->except(['index', 'show']);
-    Route::apiResource('orders', OrderController::class) ;
+    Route::get('me', [AuthController::class, 'me']);
+
+    Route::middleware('role:admin|manager|worker')->group(function () {
+        Route::apiResource('products', ProductController::class)->except(['index', 'show']);
+        Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
+        Route::apiResource('images', ImageController::class);
+    });
+
+    Route::apiResource('orders', OrderController::class);
 });
