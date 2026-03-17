@@ -30,7 +30,6 @@ class StoreProductRequest extends FormRequest
             "stock" => ['required', 'integer', 'min:0'],
             "slug" => ['required', 'unique:products,slug'],
             "category_id" => ['required', 'exists:categories,id'],
-
         ];
     }
 

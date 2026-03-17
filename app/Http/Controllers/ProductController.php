@@ -25,15 +25,10 @@ class ProductController extends Controller
     {
         Gate::authorize('manage-products');
         $data = $request->validated();
-
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
-        }
-
         $product = Product::create($data);
 
         return response()->json([
-            'message' => 'Produit ajouté avec succès',
+            'message' => 'Product created successfully',
             'product' => $product
         ], 201);
     }
