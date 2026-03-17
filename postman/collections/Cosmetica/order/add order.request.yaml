@@ -12,7 +12,7 @@ body:
 
     \    {\r
 
-    \      \"product_id\": 6,\r
+    \      \"product_slug\": \"cream-hydratante-bio\" ,\r
 
     \      \"quantity\": 2\r
 
@@ -20,7 +20,7 @@ body:
 
     \    {\r
 
-    \      \"product_id\": 7,\r
+    \      \"product_slug\": \"cream-hydratante-bio\",\r
 
     \      \"quantity\": 8\r
 
@@ -29,4 +29,4 @@ body:
     \  ]\r
 
     }"
-order: 3000
+order: 2

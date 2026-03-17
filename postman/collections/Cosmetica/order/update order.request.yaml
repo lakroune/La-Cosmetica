@@ -1,9 +1,10 @@
 $kind: http-request
-name: add order
+name: update order
 url: http://127.0.0.1:8000/api/orders/2
 method: PUT
 headers:
-  Authorization: "{{tokenJWT}}"
+  - key: Authorization
+    value: "{{tokenJWT}}"
 body:
   type: json
   content: "{\r
@@ -11,4 +12,4 @@ body:
     \    \"status\" : \"processing\"\r
 
     }"
-order: 1000
+order: 1091073298255963

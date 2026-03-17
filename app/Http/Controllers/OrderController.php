@@ -29,35 +29,43 @@ class OrderController extends Controller
         $data = $request->validated();
 
         try {
-            DB::transaction(function () use ($data, &$order, &$price) {
-                $price = 0;
+            $order = DB::transaction(function () use ($data) {
+                $totalPrice = 0;
+
                 $order = Order::create([
                     'total_price' => 0,
                     'status' => 'pending',
                     'user_id' => auth()->id(),
                 ]);
 
-                foreach ($data['products'] as $product) {
-                    $produit = Product::find($product['product_id']);
-                    $unitPrice = $produit->price;
+                foreach ($data['products'] as $item) {
+                    $product = Product::where('slug', $item['product_slug'])->firstOrFail();
 
-                    $order->products()->attach($product['product_id'], [
-                        'quantity' => $product['quantity'],
+                    $unitPrice = $product->price;
+                    $linePrice = $item['quantity'] * $unitPrice;
+
+                    $order->products()->attach($product->id, [
+                        'quantity' => $item['quantity'],
                         'unit_price' => $unitPrice,
                     ]);
 
-                    $price += $product['quantity'] * $unitPrice;
+                    $totalPrice += $linePrice;
+
+                    $product->decrement('stock', $item['quantity']);
                 }
 
-                $order->update(['total_price' => $price]);
+                $order->update(['total_price' => $totalPrice]);
+
+                return $order;
             });
 
             return response()->json([
                 'message' => 'Order created successfully',
-                'total_price' => $price
+                'order_id' => $order->id,
+                'total_price' => $order->total_price
             ], 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => 'Failed to create order: ' . $e->getMessage()], 400);
         }
     }
     /**
