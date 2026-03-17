@@ -8,14 +8,6 @@ use App\Http\Requests\UpdateImageRequest;
 
 class ImageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $images = Image::with('product')->get();
-        return response()->json($images, 200);
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -23,8 +15,14 @@ class ImageController extends Controller
     public function store(StoreImageRequest $request)
     {
         $data = $request->validated();
-        $image = Image::create($data);
-        return response()->json($image, 201);
+        foreach ($data['iamges'] as $imageFile) {
+            $path = $imageFile->store('images', 'public');
+            Image::create([
+                'url' => $path,
+                'product_id' => $data['product_id'],
+            ]);
+        }
+        return response()->json(['message' => 'Images uploaded successfully.'], 201);
     }
 
     /**

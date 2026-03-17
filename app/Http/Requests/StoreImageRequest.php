@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreImageRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class StoreImageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('manage-products');
     }
 
     /**
@@ -23,18 +24,24 @@ class StoreImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'url' => ['required', 'string', 'max:255'],
-            'product_id' => ['required', 'exists:products,id'],
+            'iamges' => 'required|array|min:1|max:4',
+            'iamges.*' => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'product_id' => 'required|exists:products,id',
         ];
     }
     public function messages(): array
     {
         return [
-            'url.required' => 'The image URL is required.',
-            'url.string' => 'The image URL must be a string.',
-            'url.max' => 'The image URL may not be greater than 255 characters.',
+            'iamges.required' => 'At least one image is required.',
+            'iamges.array' => 'The images must be an array.',
+            'iamges.min' => 'At least one image is required.',
+            'iamges.max' => 'You can upload a maximum of 4 images.',
+            'iamges.*.required' => 'Each image is required.',
+            'iamges.*.file' => 'Each item must be a file.',
+            'iamges.*.mimes' => 'Each image must be a file of type: jpeg, png, jpg, gif, svg.',
+            'iamges.*.max' => 'Each image must not exceed 2048 kilobytes.',
             'product_id.required' => 'The product ID is required.',
-            'product_id.exists' => 'The specified product does not exist.',
+            'product_id.exists' => 'The product ID does not exist.',
         ];
     }
 }

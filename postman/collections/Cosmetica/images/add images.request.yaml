@@ -1,0 +1,23 @@
+$kind: http-request
+name: add images
+url: http://127.0.0.1:8000/api/images
+method: POST
+headers:
+  - key: Authorization
+    value: "{{tokenJWT}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"product_id\": 2,\r
+
+    \  \"iamges\": [\r
+
+    \    \"image1.jpg\",\r
+
+    \    \"image2.png\"\r
+
+    \  ]\r
+
+    }"
+order: 1773739950550
