@@ -21,20 +21,20 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('manage-categories', function ($user) {
-            return $user->isAdmin();
+            return $user->isWorker();
         });
         Gate::define('manage-products', function ($user) {
             return $user->isAdmin();
         });
         Gate::define('manage-orders', function ($user) {
-            return $user->isAdmin();
+            return $user->isWorker();
         });
         Gate::define('view-order', function ($user, $order) {
-            return $user->id === $order->user_id || $user->isAdmin();
+            return $order->isMine($user) || $user->isAdmin();
         });
 
         Gate::define('cancel-order', function ($user, $order) {
-            return $user->id === $order->user_id && $order->status === 'pending';
+            return $order->isMine($user) && $user->isClient() && $order->status === 'pending';
         });
     }
 }

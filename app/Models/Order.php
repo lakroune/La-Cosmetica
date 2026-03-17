@@ -19,4 +19,8 @@ class Order extends Model
     {
         return $this->belongsToMany(Product::class, 'order_products')->withPivot('quantity', 'unit_price')->withTimestamps();
     }
+    public function isMine($user)
+    {
+        return $this->user_id === $user->id;
+    }
 }

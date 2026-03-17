@@ -70,4 +70,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->roles()->where('name', 'admin')->exists();
     }
+
+    public function isClient()
+    {
+        return $this->roles()->where('name', 'client')->exists();
+    }
+
+    public function isWorker()
+    {
+        return $this->roles()->where('name', 'worker')->exists();
+    }
 }
