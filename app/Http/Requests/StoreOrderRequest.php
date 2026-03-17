@@ -24,7 +24,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             "products" => "required|array|min:1",
-            "products.*.product_id" => "required|exists:products,id",
+            "products.*.product_slug" => "required|exists:products,slug",
             "products.*.quantity" => "required|integer|min:1",
         ];
     }
@@ -32,14 +32,14 @@ class StoreOrderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            "products.required" => "The products field is required.",
-            "products.array" => "The products field must be an array.",
-            "products.min" => "At least one product is required.",
-            "products.*.product_id.required" => "Each product must have a product ID.",
-            "products.*.product_id.exists" => "The specified product does not exist.",
-            "products.*.quantity.required" => "Each product must have a quantity.",
-            "products.*.quantity.integer" => "The quantity must be an integer.",
-            "products.*.quantity.min" => "The quantity must be at least 1.",
+            'products.required' => 'The products field is required.',
+            'products.array' => 'The products field must be an array.',
+            'products.min' => 'At least one product must be included in the order.',
+            'products.*.product_slug.required' => 'The product slug is required for each product.',
+            'products.*.product_slug.exists' => 'The specified product does not exist.',
+            'products.*.quantity.required' => 'The quantity is required for each product.',
+            'products.*.quantity.integer' => 'The quantity must be an integer.',
+            'products.*.quantity.min' => 'The quantity must be at least 1.',
 
         ];
     }
