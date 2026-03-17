@@ -1,8 +1,8 @@
 $kind: http-request
-name: get order
+name: cancel order
 url: http://127.0.0.1:8000/api/orders/2
-method: GET
+method: DELETE
 headers:
   - key: Authorization
     value: "{{tokenJWT}}"
-order: 2000
+order: 4772

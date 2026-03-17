@@ -55,7 +55,7 @@ class OrderController extends Controller
                     }
                     $product->decrement('stock', $item['quantity']);
                 }
-    
+
                 $order->update(['total_price' => $totalPrice]);
 
                 return $order;
@@ -95,6 +95,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        Gate::authorize('cancel-order', $order);
         $order->delete();
         return response()->json(null, 204);
     }

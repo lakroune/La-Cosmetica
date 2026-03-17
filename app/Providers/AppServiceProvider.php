@@ -32,5 +32,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-order', function ($user, $order) {
             return $user->id === $order->user_id || $user->isAdmin();
         });
+
+        Gate::define('cancel-order', function ($user, $order) {
+            return $user->id === $order->user_id && $order->status === 'pending';
+        });
     }
 }
