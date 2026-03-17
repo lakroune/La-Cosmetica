@@ -23,7 +23,9 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        Gate::authorize('manage-categories');
+        if (!auth()->user()->can('categories.create')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         $data = $request->validated();
         $category = Category::create($data);
 
@@ -35,6 +37,9 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
+        if (!auth()->user()->can('categories.view')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         return response()->json($category, 200);
     }
 
@@ -43,7 +48,9 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        Gate::authorize('manage-categories');
+        if (!auth()->user()->can('categories.update')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         $data = $request->validated();
         $category->update($data);
         return response()->json($category, 200);
@@ -54,7 +61,9 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        Gate::authorize('manage-categories');
+        if (!auth()->user()->can('categories.delete')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         $category->delete();
         return response()->json(null, 204);
     }

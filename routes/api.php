@@ -18,11 +18,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
 
-    Route::middleware('role:admin|manager|worker')->group(function () {
+    Route::middleware('role:admin')->group(function () {
         Route::apiResource('products', ProductController::class)->except(['index', 'show']);
         Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
         Route::apiResource('images', ImageController::class);
     });
-
-    Route::apiResource('orders', OrderController::class);
+    Route::middleware('role:worker')->group(function () {});
+    Route::middleware('role:client')->group(function () {});
 });

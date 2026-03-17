@@ -13,7 +13,7 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Gate::allows('manage-categories');
+        return auth()->user()->can('categories.create');
     }
 
     /**
