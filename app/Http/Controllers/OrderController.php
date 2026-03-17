@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Policies\OrderPolicy;
 
 class OrderController extends Controller
 {
@@ -18,7 +19,7 @@ class OrderController extends Controller
     {
         if (auth()->user()->hasRole('client')) {
             $orders = Order::with('products')->where('user_id', auth()->id())->get();
-        } else if (auth()->user()->hasRole('worker' || 'admin')) {
+        } else if (auth()->user()->hasAnyRole(['worker', 'admin', 'manager'])) {
             $orders = Order::with('products')->get();
         }
 
@@ -30,7 +31,7 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
-         
+
         $data = $request->validated();
 
         try {
@@ -80,10 +81,12 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        if (!auth()->user()->can('view-order', $order)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-        return response()->json($order->load('products'), 200);
+        $this->authorize('view', $order);
+
+        return response()->json([
+            "message" => "Order details retrieved successfully",
+            "order" => $order->load(['products', 'user'])
+        ], 200);
     }
 
     /**
