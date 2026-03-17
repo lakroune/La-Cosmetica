@@ -12,10 +12,17 @@ class AuthController extends Controller
     public function register(RegisterResquest $request)
     {
         $data = $request->validated();
-        $user =  User::create($data);
-        $user->roles()->attach(1);
+
+        $user = User::create($data);
+
+        if ($user) {
+            $user->assignRole('client');
+        } else {
+            return response()->json(['error' => 'Error creating user'], 500);
+        }
+
         return response()->json([
-            'user' => $user,
+            'user' => $user->load('roles'),
         ], 201);
     }
 

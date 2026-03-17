@@ -6,14 +6,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
-
+    use HasFactory, Notifiable, HasRoles, HasApiTokens;
+    protected $guard_name = 'api';
     /**
      * The attributes that are mass assignable.
      *
@@ -59,26 +60,23 @@ class User extends Authenticatable implements JWTSubject
             'name'  => $this->name,
         ];
     }
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class)->withTimestamps();
-    }
+
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
     public function isAdmin()
     {
-        return $this->roles()->where('name', 'admin')->exists();
+        return $this->hasRole('admin');
     }
 
     public function isClient()
     {
-        return $this->roles()->where('name', 'client')->exists();
+        return $this->hasRole('client');
     }
 
     public function isWorker()
     {
-        return $this->roles()->where('name', 'worker')->exists();
+        return $this->hasRole('worker');
     }
 }
