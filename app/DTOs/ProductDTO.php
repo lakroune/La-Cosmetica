@@ -29,4 +29,16 @@ class ProductDTO
             images: $request->validated('images', [])
         );
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'description' => $this->description,
+            'price' => $this->price,
+            'stock' => $this->stock,
+            'category_id' => $this->category_id,
+            'images' => $this->images,
+        ];
+    }
 }
