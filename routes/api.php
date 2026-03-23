@@ -1,46 +1,50 @@
-<?php
+# La Cosmetica - API Pharmacie Naturelle
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\Route;
+API pour digitaliser les ventes de cosmétiques bio et gérer les commandes.
 
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+---
 
-Route::get('categories', [CategoryController::class, 'index']);
-Route::get('categories/{id}', [CategoryController::class, 'show']);
+## Routes principales
 
-Route::get('products', [ProductController::class, 'index']);
-Route::get('products/{slug}', [ProductController::class, 'show']);
+### Auth
+- `POST /api/register` : Inscription
+- `POST /api/login` : Connexion (JWT)
+- `POST /api/logout` : Déconnexion
+- `GET /api/me` : Profil utilisateur
 
-Route::middleware('auth:api')->group(function () {
+### Produits & Catégories
+- `GET /api/products` / `GET /api/products/{slug}`
+- `GET /api/categories` / `GET /api/categories/{id}`
+- Admin : `POST/PUT/DELETE` pour produits et catégories
 
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('me', [AuthController::class, 'me']);
+### Commandes
+- `POST /api/orders` : Créer une commande
+- `GET /api/orders` : Mes commandes
+- `POST /api/orders/{id}/cancel` : Annuler
+- Worker/Admin : `PATCH /api/orders/{id}/status`
 
-    Route::post('orders', [OrderController::class, 'store']);
-    Route::get('orders', [OrderController::class, 'myOrders']);
-    // Route::get('orders/{id}', [OrderController::class, 'show']);
-    Route::post('orders/{id}/cancel', [OrderController::class, 'cancel']);
+### Statistiques (Admin)
+- `GET /api/admin/stats` : Revenus, top produits, catégories, statuts commandes
 
-    Route::middleware('role:worker|admin')->group(function () {
-        Route::patch('orders/{id}/status', [OrderController::class, 'updateStatus']);
-    });
+---
 
-    Route::middleware('role:admin')->group(function () {
+## Rôles
+- **User** : commandes, profil
+- **Worker** : mise à jour statut commandes
+- **Admin** : gestion produits/catégories, stats
 
-        Route::get('admin/stats', [AdminController::class, 'getDashboardStats']);
+---
 
-        Route::post('categories', [CategoryController::class, 'store']);
-        Route::put('categories/{id}', [CategoryController::class, 'update']);
-        Route::delete('categories/{id}', [CategoryController::class, 'destroy']);
+## Installation (Docker)
+```bash
+git clone <url>
+cd lacosmetica
+cp .env.example .env
+docker-compose up -d
+docker exec -it lacosmetica_app composer install
+docker exec -it lacosmetica_app php artisan key:generate
+docker exec -it lacosmetica_app php artisan migrate --seed
 
-        Route::post('products', [ProductController::class, 'store']);
-        Route::put('products/{id}', [ProductController::class, 'update']);
-        Route::delete('products/{id}', [ProductController::class, 'destroy']);
-    });
-});
+#Tests
+docker exec -it lacosmetica_app php artisan test
+```
