@@ -17,4 +17,16 @@ class ProductDTO
     ) {
         //
     }
+
+    public static function fromRequest($request): self
+    {
+        return new self(
+            name: $request->validated('name'),
+            description: $request->validated('description'),
+            price: (float) $request->validated('price'),
+            stock: (int) $request->validated('stock'),
+            category_id: (int) $request->validated('category_id'),
+            images: $request->validated('images', [])
+        );
+    }
 }
