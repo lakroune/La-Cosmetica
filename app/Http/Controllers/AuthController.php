@@ -2,26 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\RegisterDTO;
 use App\Http\Requests\LoginResquest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\RegisterResquest;
 use App\Models\User;
+use App\Services\AuthService;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected AuthService $authService
+    ) {
+        // 
+    }
 
-    public function register(RegisterResquest $request)
+public function register(RegisterRequest $request)
     {
-        $data = $request->validated();
-
-        $user = User::create($data);
-
-        if ($user) {
-            $user->assignRole('admin');
-        } else {
-            return response()->json(['error' => 'Error creating user'], 500);
-        }
+        $dto = RegisterDTO::fromRequest($request);
+        $user = $this->authService->registerUser($dto);
 
         return response()->json([
+            'message' => 'User registered successfully',
             'user' => $user->load('roles'),
         ], 201);
     }
