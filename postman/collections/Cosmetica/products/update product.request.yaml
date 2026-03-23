@@ -1,7 +1,7 @@
 $kind: http-request
-name: add product
-url: http://127.0.0.1:8000/api/products
-method: POST
+name: update product
+url: http://127.0.0.1:8000/api/products/parfum-dior-sauvage-1
+method: PUT
 headers:
   Authorization: "{{tokenJWT}}"
 body:
@@ -49,4 +49,4 @@ body:
       src: []
       description: ""
       disabled: true
-order: 2000
+order: 1800

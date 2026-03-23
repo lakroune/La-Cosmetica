@@ -4,4 +4,4 @@ url: http://127.0.0.1:8000/api/products/parfum-dior-sauvage-1
 method: GET
 headers:
   Authorization: "{{tokenJWT}}"
-order: 189081993977260
+order: 4000
