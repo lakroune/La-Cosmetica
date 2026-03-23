@@ -53,4 +53,33 @@ class OrderDAO
             return $order->load('products');
         });
     }
+    /**
+     * Update the status of the order.
+     *
+     * @param int $id
+     * @param string $status
+     * @return Order
+     */
+    public function updateStatus(int $id, string $status): Order
+    {
+        $order = Order::findOrFail($id);
+        $order->update(['status' => $status]);
+        return $order;
+    }
+    public function cancelOrder(int $id): bool
+    {
+        return DB::transaction(function () use ($id) {
+            $order = Order::with('products')->findOrFail($id);
+
+            if ($order->status !== 'pending') {
+                throw new Exception("Order is already {$order->status}");
+            }
+
+            foreach ($order->products as $product) {
+                $product->increment('stock', $product->pivot->quantity);
+            }
+
+            return $order->update(['status' => 'cancelled']);
+        });
+    }
 }
