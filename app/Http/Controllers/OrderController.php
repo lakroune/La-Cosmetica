@@ -2,111 +2,87 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\OrderDTO;
+use App\Http\Requests\OrderRequest;
 use App\Models\Order;
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateOrderRequest;
-use App\Models\Product;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
-use App\Policies\OrderPolicy;
+use App\Services\OrderService;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        if (auth()->user()->hasRole('client')) {
-            $orders = Order::with('products')->where('user_id', auth()->id())->get();
-        } else   {
-            $orders = Order::with('products')->get();
-        }
-
-        return response()->json($orders, 200);
+    public function __construct(
+        protected OrderService $orderService
+    ) {
+        // 
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOrderRequest $request)
+    public function store(OrderRequest $request)
     {
-
-        $data = $request->validated();
-
         try {
-            $order = DB::transaction(function () use ($data) {
-                $totalPrice = 0;
-
-                $order = Order::create([
-                    'total_price' => 0,
-                    'status' => 'pending',
-                    'user_id' => auth()->id(),
-                ]);
-
-                foreach ($data['products'] as $item) {
-                    $product = Product::where('slug', $item['product_slug'])->firstOrFail();
-
-                    $unitPrice = $product->price;
-                    $linePrice = $item['quantity'] * $unitPrice;
-
-                    $order->products()->attach($product->id, [
-                        'quantity' => $item['quantity'],
-                        'unit_price' => $unitPrice,
-                    ]);
-
-                    $totalPrice += $linePrice;
-                    if ($product->stock < $item['quantity']) {
-                        throw new \Exception("Product {$product->name} is out of stock.");
-                    }
-                    $product->decrement('stock', $item['quantity']);
-                }
-
-                $order->update(['total_price' => $totalPrice]);
-
-                return $order;
-            });
+            $dto = OrderDTO::fromRequest($request);
+            $order = $this->orderService->placeOrder($dto);
 
             return response()->json([
                 'message' => 'Order created successfully',
-                'order_id' => $order->id,
-                'total_price' => $order->total_price
+                'order' => $order
             ], 201);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to create order: ' . $e->getMessage()], 400);
+            return response()->json(['error' => $e->getMessage()], 422);
         }
     }
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
-    {
-        $this->authorize('view', $order);
 
-        return response()->json([
-            "message" => "Order details retrieved successfully",
-            "order" => $order->load(['products', 'user'])
-        ], 200);
+    public function show(int $id)
+    {
+        $order = $this->orderService->getOrderDetails($id);
+        return response()->json($order);
+    }
+
+    public function myOrders()
+    {
+        $orders = auth()->user()->orders()->with('products')->latest()->get();
+        return response()->json($orders);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrderRequest $request, Order $order)
+    public function updateStatus(Request $request, int $id)
     {
+        if (!auth()->user()->hasAnyRole(['admin', 'employee'])) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
-        $data = $request->validated();
-        $order->update($data);
-        return response()->json($order, 200);
+        $request->validate([
+            'status' => 'required|in:pending,processing,completed,cancelled'
+        ]);
+
+        $order = $this->orderService->updateOrderStatus($id, $request->status);
+
+        return response()->json([
+            'message' => 'Order status updated successfully',
+            'order' => $order
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * cancel the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function cancel(int $id)
     {
-        $this->authorize('delete', $order);
-        $order->delete();
-        return response()->json(null, 204);
+        try {
+            $userId = auth()->id();
+            $this->orderService->cancelOrder($id, $userId);
+
+            return response()->json(['message' => 'Order cancelled successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 }

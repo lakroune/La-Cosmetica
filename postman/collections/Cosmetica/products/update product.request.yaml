@@ -19,7 +19,7 @@ body:
       disabled: false
     - type: text
       key: stock
-      value: "10"
+      value: "1"
       description: ""
       disabled: false
     - type: text

@@ -59,4 +59,9 @@ class OrderService
 
         return $this->orderDAO->cancelOrder($orderId);
     }
+
+    public function getOrderDetails(int $orderId)
+    {
+        return  $this->orderDAO->getOrderDetails($orderId);
+    }
 }

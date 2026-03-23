@@ -82,4 +82,9 @@ class OrderDAO
             return $order->update(['status' => 'cancelled']);
         });
     }
+
+    public function getOrderDetails(int $id): Order
+    {
+        return Order::with('products')->findOrFail($id);
+    }
 }

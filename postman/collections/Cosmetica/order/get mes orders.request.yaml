@@ -1,7 +1,7 @@
 $kind: http-request
-name: get all orders
+name: get mes orders
 url: http://127.0.0.1:8000/api/orders
 method: GET
 headers:
-  Authorization: "{{tokenJWT}}"
-order: 5000
+  Authorization: "{{tkenclient}}"
+order: 2000

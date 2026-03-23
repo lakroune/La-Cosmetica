@@ -22,9 +22,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
 
     Route::post('orders', [OrderController::class, 'store']);
-    Route::get('orders', [OrderController::class, 'index']);
-    Route::get('orders/{id}', [OrderController::class, 'show']);
-    Route::delete('orders/{id}', [OrderController::class, 'cancel']);
+    Route::get('orders', [OrderController::class, 'myOrders']);
+    // Route::get('orders/{id}', [OrderController::class, 'show']);
+    Route::post('orders/{id}/cancel', [OrderController::class, 'cancel']);
 
     Route::middleware('role:worker|admin')->group(function () {
         Route::patch('orders/{id}/status', [OrderController::class, 'updateStatus']);
