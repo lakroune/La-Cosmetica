@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\RegisterDTO;
-use App\Http\Requests\LoginResquest;
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\RegisterResquest;
-use App\Models\User;
 use App\Services\AuthService;
 
 class AuthController extends Controller
@@ -17,7 +15,7 @@ class AuthController extends Controller
         // 
     }
 
-public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request)
     {
         $dto = RegisterDTO::fromRequest($request);
         $user = $this->authService->registerUser($dto);
@@ -28,24 +26,29 @@ public function register(RegisterRequest $request)
         ], 201);
     }
 
-    public  function login(LoginResquest $request)
+    public function login(LoginRequest $request)
     {
-        $data = $request->validated();
+        $token = $this->authService->login($request->validated());
 
-        if (!$token = auth("api")->attempt($data)) {
+        if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        return response()->json(['token' => $token], 200);
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60
+        ]);
     }
 
     public function me()
     {
-        return response()->json(auth()->user(), 200);
+        return response()->json(auth()->user());
     }
 
     public function logout()
     {
         auth('api')->logout();
-        return response()->json(['message' => 'Successfully logged out'], 200);
+        return response()->json(['message' => 'Successfully logged out']);
     }
 }
