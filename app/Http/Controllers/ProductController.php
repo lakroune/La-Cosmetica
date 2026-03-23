@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DTOs\ProductDTO;
 use App\Models\Product;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\ProductRequest;
+
 use App\Services\ProductService;
 use Exception;
 
@@ -25,7 +25,7 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request)
+    public function store(ProductRequest $request)
     {
 
         try {
@@ -57,12 +57,20 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
 
-        $data = $request->validated();
-        $product->update($data);
-        return response()->json(["message" => "Product updated successfully", "product" => $product], 200);
+        try {
+            $dto = ProductDTO::fromRequest($request);
+            $product = $this->productService->updateProduct($product->id, $dto);
+
+            return response()->json([
+                'message' => 'Product updated successfully',
+                'data' => $product
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
 
     /**
@@ -70,8 +78,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-
-        $product->delete();
-        return response()->json(['message' => 'Product deleted successfully'], 204);
+        $this->productService->deleteProduct($product->id);
+        return response()->json(['message' => 'Product deleted successfully']);
     }
 }
