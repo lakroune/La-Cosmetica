@@ -2,20 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\DTOs\CategoryDTO;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use Illuminate\Support\Facades\Gate;
+use App\Services\CategoryService;
+use Exception;
 
 class CategoryController extends Controller
 {
+    public function __construct(
+        protected CategoryService $categoryService
+    ) {
+        // 
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $categories = Category::all();
-        return response()->json($categories, 200);
+        $categories = $this->categoryService->listAllCategories();
+        return response()->json($categories);
     }
 
     /**
@@ -23,48 +29,46 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        if (!auth()->user()->can('categories.create')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-        $data = $request->validated();
-        $category = Category::create($data);
+        $dto = CategoryDTO::fromRequest($request);
+        $category = $this->categoryService->storeCategory($dto);
 
-        return response()->json($category, 201);
+        return response()->json([
+            'message' => 'Category created successfully',
+            'data' => $category
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(int $id)
     {
-        if (!auth()->user()->can('categories.view')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-        return response()->json($category, 200);
+        $category = $this->categoryService->getCategoryDetails($id);
+        return response()->json($category);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, int $id)
     {
-        if (!auth()->user()->can('categories.update')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-        $data = $request->validated();
-        $category->update($data);
-        return response()->json($category, 200);
-    }
+        $dto = CategoryDTO::fromRequest($request);
+        $this->categoryService->updateCategory($id, $dto);
 
+        return response()->json([
+            'message' => 'Category updated successfully'
+        ]);
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(int $id)
     {
-        if (!auth()->user()->can('categories.delete')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        try {
+            $this->categoryService->deleteCategory($id);
+            return response()->json(['message' => 'Category deleted successfully']);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
         }
-        $category->delete();
-        return response()->json(null, 204);
     }
 }

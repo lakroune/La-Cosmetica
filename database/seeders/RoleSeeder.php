@@ -13,22 +13,22 @@ class RoleSeeder extends Seeder
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-
-        Permission::create(['name' => '/* The `products` section in the code is defining permissions related to product management within the application. These permissions include viewing products, listing products, creating new products, updating existing products, deleting products, and managing images associated with products. These permissions are crucial for controlling access and actions related to products within the system. */
-        /* In the given PHP code snippet, the `products` section is related to defining permissions and roles for managing products within an application. */
-        products.view', 'guard_name' => 'api']);
+        // ===== Permissions Produits =====
+        Permission::create(['name' => 'products.view', 'guard_name' => 'api']);
         Permission::create(['name' => 'products.list', 'guard_name' => 'api']);
         Permission::create(['name' => 'products.create', 'guard_name' => 'api']);
         Permission::create(['name' => 'products.update', 'guard_name' => 'api']);
         Permission::create(['name' => 'products.delete', 'guard_name' => 'api']);
         Permission::create(['name' => 'products.manage_images', 'guard_name' => 'api']);
 
+        // ===== Permissions Catégories =====
         Permission::create(['name' => 'categories.view', 'guard_name' => 'api']);
         Permission::create(['name' => 'categories.list', 'guard_name' => 'api']);
         Permission::create(['name' => 'categories.create', 'guard_name' => 'api']);
         Permission::create(['name' => 'categories.update', 'guard_name' => 'api']);
         Permission::create(['name' => 'categories.delete', 'guard_name' => 'api']);
 
+        // ===== Permissions Commandes =====
         Permission::create(['name' => 'orders.place', 'guard_name' => 'api']);
         Permission::create(['name' => 'orders.view_own', 'guard_name' => 'api']);
         Permission::create(['name' => 'orders.cancel_own', 'guard_name' => 'api']);
@@ -36,10 +36,12 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'orders.update_status', 'guard_name' => 'api']);
         Permission::create(['name' => 'orders.manage', 'guard_name' => 'api']);
 
+        // ===== Permissions Statistiques =====
         Permission::create(['name' => 'stats.view', 'guard_name' => 'api']);
         Permission::create(['name' => 'stats.products', 'guard_name' => 'api']);
         Permission::create(['name' => 'stats.categories', 'guard_name' => 'api']);
 
+        // ===== Permissions Utilisateurs =====
         Permission::create(['name' => 'users.view', 'guard_name' => 'api']);
         Permission::create(['name' => 'users.create', 'guard_name' => 'api']);
         Permission::create(['name' => 'users.update', 'guard_name' => 'api']);
@@ -47,8 +49,9 @@ class RoleSeeder extends Seeder
 
         Permission::create(['name' => 'roles.manage', 'guard_name' => 'api']);
 
+        // ===== ROLES =====
 
-        // --- SUPER ADMIN ---
+        // --- ADMIN ---
         $admin = Role::create(['name' => 'admin', 'guard_name' => 'api']);
         $admin->givePermissionTo(Permission::all());
 

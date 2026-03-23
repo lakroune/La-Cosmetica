@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Gate;
 
 class StoreCategoryRequest extends FormRequest
@@ -13,7 +15,7 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->can('categories.create');
+        return auth()->user()->hasRole('admin');
     }
 
     /**
@@ -24,18 +26,28 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'name' => 'required|string|max:255|unique:categories,name,' . $this->route('category'),
+            'description' => 'nullable|string|max:500',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required' => 'The category name is required.',
-            'name.string' => 'The category name must be a string.',
-            'name.max' => 'The category name may not be greater than 255 characters.',
-            'description.string' => 'The category description must be a string.',
+            'name.required' => 'The name field is required.',
+            'name.string' => 'The name must be a string.',
+            'name.max' => 'The name may not be greater than 255 characters.',
+            'name.unique' => 'The name has already been taken.',
+            'description.string' => 'The description must be a string.',
+            'description.max' => 'The description may not be greater than 500 characters.',
         ];
+    }
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success'   => false,
+            'message'   => 'Validation errors',
+            'data'      => $validator->errors()
+        ]));
     }
 }

@@ -3,7 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Client\HttpClientException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Gate;
 
 class UpdateCategoryRequest extends FormRequest
@@ -13,7 +16,7 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->can('categories.update');
+        return auth()->user()->hasRole('admin');
     }
 
     /**
@@ -37,5 +40,13 @@ class UpdateCategoryRequest extends FormRequest
             'name.max' => 'The category name may not be greater than 255 characters.',
             'description.string' => 'The category description must be a string.',
         ];
+    }
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success'   => false,
+            'message'   => 'Validation errors',
+            'data'      => $validator->errors()
+        ]));
     }
 }
