@@ -2,45 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\ProductDTO;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use Illuminate\Support\Facades\Gate;
+use App\Services\ProductService;
+use Exception;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        protected ProductService $productService
+    ) {}
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-
-        $products = Product::with('category')->get();
-        return response()->json(["message" => "Products found successfully", "products" => $products], 200);
+        $products = $this->productService->getAllProducts();
+        return response()->json($products);
     }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreProductRequest $request)
     {
 
-        $data = $request->validated();
-        $product = Product::create($data);
+        try {
+            $dto = ProductDTO::fromRequest($request);
+            $product = $this->productService->createProduct($dto);
 
-        return response()->json([
-            'message' => 'Product created successfully',
-            'product' => $product
-        ], 201);
+            return response()->json([
+                'message' => 'Product created successfully',
+                'data' => $product
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(string $slug)
     {
-
-        return response()->json(["message" => "Product found successfully", "product" => $product->load('category')], 200);
+        try {
+            $product = $this->productService->getProductBySlug($slug);
+            return response()->json($product);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'this product does not exist'], 404);
+        }
     }
 
     /**
