@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Gate;
 
 class StoreProductRequest extends FormRequest
@@ -13,7 +15,7 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return  auth()->user()->can('products.create');
+        return auth()->user()->hasRole('admin');
     }
 
     /**
@@ -24,11 +26,13 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => ['required', 'string', 'max:255'],
-            "description" => ['nullable', 'string'],
-            "price" => ['required', 'numeric', 'min:0'],
-            "stock" => ['required', 'integer', 'min:0'],
-            "category_id" => ['required', 'exists:categories,id'],
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'images' => 'required|array|min:1|max:4',
+            'images.*' => 'url',
         ];
     }
 
@@ -47,7 +51,20 @@ class StoreProductRequest extends FormRequest
             'stock.min' => 'The product stock must be at least 0.',
             'category_id.required' => 'The category ID is required.',
             'category_id.exists' => 'The selected category does not exist.',
-             
+            'images.required' => 'At least one image is required.',
+            'images.array' => 'The images must be an array.',
+            'images.min' => 'At least one image is required.',
+            'images.max' => 'You can upload a maximum of 4 images.',
         ];
+    }
+
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success'   => false,
+            'message'   => 'Validation errors',
+            'data'      => $validator->errors()
+        ]));
     }
 }
