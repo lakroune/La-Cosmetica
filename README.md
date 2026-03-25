@@ -1,52 +1,50 @@
-La Cosmetica API
-A professional backend system for a cosmetics store built with Laravel 11, PostgreSQL, and Docker, following the DTO/DAO/Service architectural pattern.
+# La Cosmetica - API Pharmacie Naturelle
 
-🚀 Quick Start (Docker)
-Environment Setup:
-Copy .env.example to .env and ensure the following:
+API pour digitaliser les ventes de cosmétiques bio et gérer les commandes.
 
-Extrait de code
-DB_CONNECTION=pgsql
-DB_HOST=db
-DB_PASSWORD=123456
-Launch Containers:
+---
 
-PowerShell
-docker-compose up -d --build
-Initialize Application:
+## Routes principales
 
-PowerShell
-# Enter the app container
-docker-compose exec app bash
+### Auth
+- `POST /api/register` : Inscription
+- `POST /api/login` : Connexion (JWT)
+- `POST /api/logout` : Déconnexion
+- `GET /api/me` : Profil utilisateur
 
-# Install dependencies & Generate keys
-composer install
-php artisan key:generate
-php artisan jwt:secret
+### Produits & Catégories
+- `GET /api/products` / `GET /api/products/{slug}`
+- `GET /api/categories` / `GET /api/categories/{id}`
+- Admin : `POST/PUT/DELETE` pour produits et catégories
 
-# Run Migrations & Seeders
-php artisan migrate --seed
-🏗️ Architecture & Features
-Design Pattern: Strict separation of concerns (DTO -> DAO -> Service).
+### Commandes
+- `POST /api/orders` : Créer une commande
+- `GET /api/orders` : Mes commandes
+- `POST /api/orders/{id}/cancel` : Annuler
+- Worker/Admin : `PATCH /api/orders/{id}/status`
 
-Security: Role-based access control (Admin, Employee, Client) using Spatie.
+### Statistiques (Admin)
+- `GET /api/admin/stats` : Revenus, top produits, catégories, statuts commandes
 
-Authentication: Stateless API authentication via JWT.
+---
 
-Performance: Advanced dashboard statistics using Query Builder.
+## Rôles
+- **User** : commandes, profil
+- **Worker** : mise à jour statut commandes
+- **Admin** : gestion produits/catégories, stats
 
-📍 Key Endpoints
-POST /api/login - User authentication.
+---
 
-GET /api/products/{slug} - Fetch product details by Slug.
+## Installation (Docker)
+```bash
+git clone <url>
+cd lacosmetica
+cp .env.example .env
+docker-compose up -d
+docker exec -it lacosmetica_app composer install
+docker exec -it lacosmetica_app php artisan key:generate
+docker exec -it lacosmetica_app php artisan migrate --seed
 
-POST /api/orders - Place a new order (Client only).
-
-GET /api/admin/stats - Management dashboard stats (Admin only).
-
-🛠️ Business Rules
-Images: Maximum of 4 images per product.
-
-Inventory: Automatic stock deduction upon order and restoration upon cancellation.
-
-Slug: SEO-friendly URLs generated automatically from product names.
+#Tests
+docker exec -it lacosmetica_app php artisan test
+```
