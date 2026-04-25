@@ -32,8 +32,9 @@ class ProductDAO
             ]);
 
             if (!empty($dto->images)) {
-                foreach ($dto->images as $url) {
-                    $product->images()->create(['url' => $url]);
+                foreach ($dto->images as $imageFile) {
+                    $path = $imageFile->store('products', 'public');
+                    $product->images()->create(['url' => $path]);
                 }
             }
 
